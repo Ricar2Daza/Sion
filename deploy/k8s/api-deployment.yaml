@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sion-api
+  namespace: sion
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sion-api
+  template:
+    metadata:
+      labels:
+        app: sion-api
+    spec:
+      containers:
+        - name: api
+          image: sion-api:latest
+          ports:
+            - containerPort: 4000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: sion-secrets
+                  key: database-url
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: sion-secrets
+                  key: jwt-secret
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sion-api
+  namespace: sion
+spec:
+  selector:
+    app: sion-api
+  ports:
+    - port: 4000
+      targetPort: 4000

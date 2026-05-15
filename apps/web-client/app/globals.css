@@ -1,0 +1,43 @@
+:root {
+  --sion-primary: #0e3b24;
+  --sion-accent: #78c043;
+  --sion-bg: #f4f6f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, 'Segoe UI', sans-serif;
+  background: var(--sion-bg);
+  color: #1e2a24;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+}
+
+h1 {
+  color: var(--sion-primary);
+  font-size: 1.75rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+  border: 1px solid #e2e8e6;
+  box-shadow: 0 4px 20px rgba(14, 59, 36, 0.06);
+}
+
+code {
+  font-size: 0.85rem;
+  background: #e8f5ee;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}

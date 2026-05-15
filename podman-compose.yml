@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: sion-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: sion_user
+      POSTGRES_PASSWORD: sion_password
+      POSTGRES_DB: sion_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: sion-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sion-api
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://sion_user:sion_password@postgres:5432/sion_db?schema=public
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_ACCESS_SECONDS: "900"
+      JWT_REFRESH_DAYS: "7"
+      WOMPI_WEBHOOK_SECRET: ${WOMPI_WEBHOOK_SECRET:-}
+    depends_on:
+      - postgres
+
+  web:
+    build:
+      context: ./apps/web-client
+      dockerfile: Dockerfile
+    container_name: sion-web-client
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      API_INTERNAL_URL: http://api:4000/api/v1
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
